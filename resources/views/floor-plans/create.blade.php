@@ -31,12 +31,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="file" class="form-label">File Denah (PNG/JPG/PDF)</label>
+                        <label for="file" class="form-label">File Denah (PNG/JPG)</label>
                         <input type="file" name="file" id="file" class="form-control @error('file') is-invalid @enderror" accept=".png,.jpg,.jpeg,.pdf" required>
                         @error('file')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted">Upload hasil export dari AutoCAD (PNG/JPG/PDF), maksimal 10 MB.</small>
+                        <small class="text-muted">Upload hasil export dari AutoCAD (PNG/JPG), maksimal 10 MB.</small>
                     </div>
 
                     <div class="mb-3">

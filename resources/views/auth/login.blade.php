@@ -181,14 +181,24 @@
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--primary-green);
+            color: #6c757d;
             cursor: pointer;
             z-index: 2;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .input-icon-wrapper .password-toggle:hover {
-            color: var(--dark-green);
+            color: var(--primary-green);
+        }
+        
+        .input-icon-wrapper .password-toggle:active {
+            transform: translateY(-50%) scale(0.95);
         }
         
         .form-check {
@@ -339,7 +349,9 @@
                                    name="password" 
                                    placeholder="Masukkan password Anda"
                                    required>
-                            <i class="fas fa-eye password-toggle" id="togglePassword" title="Tampilkan/Sembunyikan Password"></i>
+                            <span class="password-toggle" id="togglePassword" title="Tampilkan/Sembunyikan Password">
+                                <i class="fas fa-eye"></i>
+                            </span>
                         </div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -372,7 +384,7 @@
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');
-            const toggleIcon = this;
+            const toggleIcon = this.querySelector('i');
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
