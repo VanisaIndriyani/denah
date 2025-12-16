@@ -121,9 +121,6 @@
     </div>
     @unless($readOnly)
         <div class="alert alert-info mb-3">
-            <strong>Mode Warnai Ruangan:</strong>
-            Klik beberapa titik pada tepi ruangan untuk membentuk area. Setelah bentuk ruangan terbentuk,
-            double-click atau klik kanan untuk menyimpan sehingga ruangan akan terwarnai penuh (merah/hijau) secara transparan.
             <br><strong class="text-warning">⚠ Penting:</strong> Pilih ruangan saat menyimpan area dan pastikan jumlah titik pengukuran sudah diisi di form ruangan agar simbol (❌ ⭕ 🔺) muncul.
             <br><strong class="text-danger">🗑️ Hapus Area:</strong> Double-click pada area yang sudah dibuat untuk menghapusnya jika ada kesalahan input.
         </div>
@@ -263,10 +260,7 @@
 </div>
 
 @unless($readOnly)
-    <div class="alert alert-info">
-        <strong>Catatan:</strong> Koordinat disimpan dalam persen (%) dari lebar dan tinggi gambar,
-        sehingga posisi titik tetap proporsional saat gambar diperbesar/dikecilkan.
-    </div>
+    
 
     <!-- Modal Form Input Area (Warnai Ruangan) -->
     <div class="modal fade" id="areaModal-{{ $floorPlan->id }}" tabindex="-1">
@@ -540,14 +534,23 @@
                     const pointId = e.target.getAttribute('data-id');
                     if (pointId && confirm('Apakah Anda yakin ingin menghapus area ini?')) {
                         // Hapus area via AJAX
-                        fetch(`/points/${pointId}`, {
+                        const deleteUrl = '{{ url("points") }}/' + pointId;
+                        fetch(deleteUrl, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
                             }
                         })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) {
+                                return res.json().then(err => {
+                                    throw new Error(err.message || 'HTTP error! status: ' + res.status);
+                                });
+                            }
+                            return res.json();
+                        })
                         .then(data => {
                             if (data.success) {
                                 alert('Area berhasil dihapus!');
@@ -556,8 +559,9 @@
                                 alert('Gagal menghapus area: ' + (data.message || 'Terjadi kesalahan'));
                             }
                         })
-                        .catch(() => {
-                            alert('Terjadi kesalahan saat menghapus area.');
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan saat menghapus area: ' + error.message);
                         });
                     }
                     return;
@@ -843,5 +847,6 @@
 </script>
 @endif
 @endpush
+
 
 

@@ -23,39 +23,65 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .header {
-            text-align: center;
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 3px solid #198754;
         }
         .header-logo {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            justify-content: flex-start;
+            gap: 20px;
             margin-bottom: 15px;
         }
         .header-logo img {
             height: 100px;
             width: auto;
+            flex-shrink: 0;
         }
         .header-logo-text {
-            font-size: 18px;
-            color: #198754;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .header-logo-text .org-name {
+            font-size: 16px;
+            color: #333;
             font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+        .header-logo-text .org-dept {
+            font-size: 15px;
+            color: #333;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+        .header-logo-text .org-address {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .header-title {
+            text-align: center;
+            margin-top: 15px;
         }
         .header h1 {
             font-size: 24px;
             color: #198754;
             margin-bottom: 8px;
             font-weight: 600;
+            text-align: center;
         }
         .header h2 {
             font-size: 18px;
             color: #333;
             margin: 0;
             font-weight: 400;
+            text-align: center;
         }
         .info-section {
             background-color: #f8f9fa;
@@ -222,8 +248,14 @@
             .header-logo img {
                 height: 80px;
             }
-            .header-logo-text {
-                font-size: 16px;
+            .header-logo-text .org-name {
+                font-size: 14px;
+            }
+            .header-logo-text .org-dept {
+                font-size: 13px;
+            }
+            .header-logo-text .org-address {
+                font-size: 11px;
             }
             .header h1 {
                 font-size: 20px;
@@ -236,10 +268,16 @@
         <div class="header">
             <div class="header-logo">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo">
-                <div class="header-logo-text">Pemetaan Pengukuran Lingkungan Kerja</div>
+                <div class="header-logo-text">
+                    <div class="org-name">Unit Pelaksana Teknis Keselamatan Kerja</div>
+                    <div class="org-dept">Disnakertrans Provinsi Jawa Timur</div>
+                    <div class="org-address">Jl. Dukuh Menanggal No. 122, Surabaya</div>
+                </div>
             </div>
-            <h1>Pemetaan Pengukuran Lingkungan Kerja UPTK2 Disnakertrans Provinsi Jawa Timur</h1>
-            <h2>{{ $floorPlan->name }}</h2>
+            <div class="header-title">
+                <h1>Pemetaan Pengukuran Lingkungan Kerja UPTK2 Disnakertrans Provinsi Jawa Timur</h1>
+                <h2>{{ $floorPlan->name }}</h2>
+            </div>
         </div>
 
         <div class="info-section">

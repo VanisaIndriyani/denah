@@ -79,7 +79,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
-                            <thead class="table-dark">
+                            <thead style="background-color: #198754; color: white;">
                                 <tr>
                                     <th style="width: 5%;">No</th>
                                     <th style="width: 20%;">Jenis Pengukuran Lingkungan Kerja</th>

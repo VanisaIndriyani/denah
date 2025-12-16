@@ -235,11 +235,17 @@ class PointController extends Controller
 
     public function destroy(Point $point)
     {
-        $this->authorize('update', $point->floorPlan);
+        try {
+            $this->authorize('update', $point->floorPlan);
 
-        $point->delete();
+            $point->delete();
 
-        return response()->json(['success' => true, 'message' => 'Titik berhasil dihapus']);
+            return response()->json(['success' => true, 'message' => 'Titik berhasil dihapus']);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk menghapus titik ini.'], 403);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
     }
 
     public function getRooms(FloorPlan $floorPlan)
