@@ -43,6 +43,12 @@
         position: absolute;
         pointer-events: auto;
         cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .floorplan-area:hover {
+        stroke-width: 2 !important;
+        opacity: 0.8;
     }
     .floorplan-area.diatas_nab {
         background-color: rgba(220, 53, 69, 0.3); /* merah transparan */
@@ -119,6 +125,7 @@
             Klik beberapa titik pada tepi ruangan untuk membentuk area. Setelah bentuk ruangan terbentuk,
             double-click atau klik kanan untuk menyimpan sehingga ruangan akan terwarnai penuh (merah/hijau) secara transparan.
             <br><strong class="text-warning">⚠ Penting:</strong> Pilih ruangan saat menyimpan area dan pastikan jumlah titik pengukuran sudah diisi di form ruangan agar simbol (❌ ⭕ 🔺) muncul.
+            <br><strong class="text-danger">🗑️ Hapus Area:</strong> Double-click pada area yang sudah dibuat untuk menghapusnya jika ada kesalahan input.
         </div>
     @endunless
 </div>
@@ -524,8 +531,42 @@
         let areaPoints = [];
 
         if (!readOnly) {
+            // Event listener untuk double-click area yang sudah ada (untuk delete)
+            overlay.addEventListener('dblclick', function(e) {
+                // Hanya handle double-click pada polygon area
+                if (e.target.tagName === 'polygon' && e.target.classList.contains('floorplan-area')) {
+                    e.stopPropagation(); // Stop event bubbling
+                    e.preventDefault();
+                    const pointId = e.target.getAttribute('data-id');
+                    if (pointId && confirm('Apakah Anda yakin ingin menghapus area ini?')) {
+                        // Hapus area via AJAX
+                        fetch(`/points/${pointId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Area berhasil dihapus!');
+                                location.reload();
+                            } else {
+                                alert('Gagal menghapus area: ' + (data.message || 'Terjadi kesalahan'));
+                            }
+                        })
+                        .catch(() => {
+                            alert('Terjadi kesalahan saat menghapus area.');
+                        });
+                    }
+                    return;
+                }
+            });
+
             wrapper.addEventListener('click', function (e) {
-                if (e.target.classList.contains('floorplan-point') || e.target.tagName === 'polygon') {
+                // Jangan tambah titik jika klik pada area yang sudah ada atau point
+                if (e.target.classList.contains('floorplan-point') || (e.target.tagName === 'polygon' && e.target.classList.contains('floorplan-area'))) {
                     return;
                 }
 
@@ -552,8 +593,12 @@
                 overlay.appendChild(tempPoint);
             });
 
-            // Double click atau right click untuk selesai gambar area
+            // Double click atau right click untuk selesai gambar area (hanya jika sedang membuat area baru)
             wrapper.addEventListener('dblclick', function(e) {
+                // Jangan save jika double-click pada area yang sudah ada
+                if (e.target.tagName === 'polygon' && e.target.classList.contains('floorplan-area')) {
+                    return;
+                }
                 if (areaPoints.length >= 3) {
                     e.preventDefault();
                     saveArea();
