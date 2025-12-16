@@ -21,10 +21,10 @@ class NabEvaluator
 
         switch ($parameter) {
             case 'pencahayaan':
-                // NAB > 300 → Tidak memenuhi (merah)
-                // NAB ≤ 300 → Memenuhi (hijau)
+                // NAB < 300 → Tidak memenuhi (merah)
+                // NAB ≥ 300 → Memenuhi (hijau)
                 $result['unit'] = 'Lux Meter';
-                if ($value > 300) {
+                if ($value < 300) {
                     $result['category'] = 'diatas_nab';
                     $result['meets_nab'] = false;
                 }

@@ -28,6 +28,23 @@
             padding-bottom: 15px;
             border-bottom: 3px solid #198754;
         }
+        .header-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .header-logo img {
+            height: 100px;
+            width: auto;
+        }
+        .header-logo-text {
+            font-size: 18px;
+            color: #198754;
+            font-weight: 600;
+        }
         .header h1 {
             font-size: 24px;
             color: #198754;
@@ -202,13 +219,26 @@
             .legend-row {
                 gap: 15px;
             }
+            .header-logo img {
+                height: 80px;
+            }
+            .header-logo-text {
+                font-size: 16px;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="print-container">
         <div class="header">
-            <h1>Pemetaan Lingkungan Kerja</h1>
+            <div class="header-logo">
+                <img src="{{ asset('img/logo.png') }}" alt="Logo">
+                <div class="header-logo-text">Pemetaan Pengukuran Lingkungan Kerja</div>
+            </div>
+            <h1>Pemetaan Pengukuran Lingkungan Kerja UPTK2 Disnakertrans Provinsi Jawa Timur</h1>
             <h2>{{ $floorPlan->name }}</h2>
         </div>
 
@@ -385,34 +415,99 @@
         <p><strong>Catatan:</strong> File denah bertipe {{ strtoupper($floorPlan->file_type) }}. Untuk visual titik di atas denah, gunakan file gambar (PNG/JPG).</p>
     @endif
 
-        @if($floorPlan->points->count() > 0)
+        @if($floorPlan->points->where('type', 'area')->count() > 0)
             <table class="points-table">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Tipe</th>
+                        <th>Jenis Pengukuran Lingkungan Kerja</th>
                         <th>Kategori</th>
                         <th>Posisi</th>
+                        <th>Hasil Pengukuran</th>
                         <th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($floorPlan->points as $index => $point)
+                    @foreach($floorPlan->points->where('type', 'area') as $index => $point)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $point->type === 'area' ? 'Area' : 'Titik' }}</td>
+                            <td>
+                                @php
+                                    $jenisPengukuran = [];
+                                    if ($point->measurements && is_array($point->measurements)) {
+                                        foreach ($point->measurements as $measurement) {
+                                            $paramName = $measurement['parameter'];
+                                            if ($paramName === 'pencahayaan') {
+                                                $jenisPengukuran[] = 'Pencahayaan';
+                                            } elseif ($paramName === 'debu_total') {
+                                                $jenisPengukuran[] = 'Debu Total';
+                                            } elseif (strpos($paramName, 'kudr_') === 0) {
+                                                $jenisPengukuran[] = 'Kualitas Udara Dalam Ruangan';
+                                            } else {
+                                                $jenisPengukuran[] = ucfirst(str_replace('_', ' ', $paramName));
+                                            }
+                                        }
+                                    } elseif ($point->parameter) {
+                                        if ($point->parameter === 'pencahayaan') {
+                                            $jenisPengukuran[] = 'Pencahayaan';
+                                        } elseif ($point->parameter === 'debu_total') {
+                                            $jenisPengukuran[] = 'Debu Total';
+                                        } elseif (strpos($point->parameter, 'kudr_') === 0) {
+                                            $jenisPengukuran[] = 'Kualitas Udara Dalam Ruangan';
+                                        } else {
+                                            $jenisPengukuran[] = ucfirst(str_replace('_', ' ', $point->parameter));
+                                        }
+                                    } else {
+                                        $jenisPengukuran[] = 'Pengukuran Lingkungan Kerja';
+                                    }
+                                @endphp
+                                {{ implode(', ', array_unique($jenisPengukuran)) ?: 'Pengukuran Lingkungan Kerja' }}
+                            </td>
                             <td>
                                 <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: {{ $point->category === 'diatas_nab' ? '#dc3545' : '#198754' }}; margin-right: 5px;"></span>
                                 {{ $point->category === 'diatas_nab' ? 'Di atas NAB' : 'Di bawah NAB' }}
                             </td>
                             <td>
-                                @if($point->type === 'area')
-                                    Area ({{ count($point->coordinates ?? []) }} titik)
+                                @if($point->coordinates && is_array($point->coordinates))
+                                    @php
+                                        $coords = collect($point->coordinates);
+                                        $centerX = $coords->avg('x');
+                                        $centerY = $coords->avg('y');
+                                    @endphp
+                                    {{ number_format($centerX, 2) }}%, {{ number_format($centerY, 2) }}%
                                 @else
                                     {{ $point->x }}%, {{ $point->y }}%
                                 @endif
                             </td>
-                            <td>{{ $point->notes ?: '-' }}</td>
+                            <td>
+                                @php
+                                    $measurementTexts = [];
+                                    if ($point->measurements && is_array($point->measurements)) {
+                                        foreach ($point->measurements as $measurement) {
+                                            $value = number_format($measurement['value'], $measurement['parameter'] === 'pencahayaan' ? 0 : 2);
+                                            $measurementTexts[] = $value . ' ' . $measurement['unit'];
+                                        }
+                                    } elseif ($point->value && $point->unit) {
+                                        $value = number_format($point->value, $point->parameter === 'pencahayaan' ? 0 : 2);
+                                        $measurementTexts[] = $value . ' ' . $point->unit;
+                                    }
+                                @endphp
+                                @if(count($measurementTexts) > 0)
+                                    {{ implode(', ', $measurementTexts) }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @php
+                                    // Ambil notes tanpa JSON measurements jika ada
+                                    $notes = $point->notes ?? '';
+                                    if (strpos($notes, '|') !== false && json_decode(substr($notes, strrpos($notes, '|') + 1))) {
+                                        $notes = trim(substr($notes, 0, strrpos($notes, '|')));
+                                    }
+                                @endphp
+                                {{ $notes ?: ($point->room ? $point->room->name : '-') }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

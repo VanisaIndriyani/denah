@@ -20,10 +20,12 @@ class Point extends Model
         'meets_nab',
         'notes',
         'coordinates',
+        'measurements',
     ];
 
     protected $casts = [
         'coordinates' => 'array',
+        'measurements' => 'array',
         'x' => 'decimal:2',
         'y' => 'decimal:2',
         'value' => 'decimal:2',

@@ -314,7 +314,7 @@
                                        name="lighting_value" 
                                        placeholder="Contoh: 290"
                                        data-parameter="pencahayaan">
-                                <small class="text-muted">Lux Meter. NAB: &lt; 300 (hijau), ≥ 300 (merah)</small>
+                                <small class="text-muted">Lux Meter. NAB: ≥ 300 (hijau), &lt; 300 (merah)</small>
                                 <div class="nab-status mt-1" id="pencahayaanStatus-{{ $floorPlan->id }}" style="display: none;"></div>
                             </div>
 
@@ -643,7 +643,7 @@
                     let worstCategory = 'dibawah_nab'; // Default hijau
                     let hasMeasurement = false;
                     const nabRules = {
-                        'pencahayaan': { threshold: 300, unit: 'Lux Meter', above: '>', below: '≤', type: 'threshold' },
+                        'pencahayaan': { threshold: 300, unit: 'Lux Meter', above: '<', below: '≥', type: 'threshold' },
                         'debu_total': { threshold: 10, unit: 'mg/m³', above: '>', below: '≤', type: 'threshold' },
                         'kudr_suhu': { min: 23, max: 26, unit: '°C', type: 'range' },
                         'kudr_rh': { min: 40, max: 60, unit: '%', type: 'range' },
@@ -674,7 +674,12 @@
                                         ? `✓ Memenuhi NAB (${value} ${rule.unit} dalam range ${rule.min}-${rule.max} ${rule.unit})`
                                         : `✗ Tidak Memenuhi NAB (${value} ${rule.unit} di luar range ${rule.min}-${rule.max} ${rule.unit})`;
                                 } else if (rule.type === 'threshold') {
-                                    meetsNAB = value <= rule.threshold;
+                                    // Untuk pencahayaan, logika terbalik: >= 300 memenuhi, < 300 tidak memenuhi
+                                    if (parameter === 'pencahayaan') {
+                                        meetsNAB = value >= rule.threshold;
+                                    } else {
+                                        meetsNAB = value <= rule.threshold;
+                                    }
                                     statusText = meetsNAB
                                         ? `✓ Memenuhi NAB (${value} ${rule.unit} ${rule.below} ${rule.threshold} ${rule.unit})`
                                         : `✗ Tidak Memenuhi NAB (${value} ${rule.unit} ${rule.above} ${rule.threshold} ${rule.unit})`;

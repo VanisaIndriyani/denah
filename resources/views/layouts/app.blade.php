@@ -48,21 +48,50 @@
             padding: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            text-align: center;
+            position: relative;
         }
         
         .sidebar-header .logo {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             color: white;
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-header .logo img {
+            height: 120px;
+            width: auto;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-header .logo-text {
+            font-size: 1rem;
+            line-height: 1.4;
+            text-align: center;
         }
         
         .sidebar.collapsed .sidebar-header .logo-text {
             display: none;
+        }
+        
+        .sidebar.collapsed .sidebar-header .logo img {
+            height: 70px;
+        }
+        
+        .sidebar-header .sidebar-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
         }
         
         .sidebar-toggle {
@@ -269,8 +298,8 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="{{ route('dashboard') }}" class="logo">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span class="logo-text ms-2">Pemetaan Lingkungan Kerja</span>
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo">
+                    <span class="logo-text">Pemetaan Pengukuran Lingkungan Kerja</span>
                 </a>
                 <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
                     <i class="fas fa-chevron-left"></i>

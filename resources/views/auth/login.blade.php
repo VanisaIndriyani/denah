@@ -27,7 +27,9 @@
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px 0;
         }
         
         body::before {
@@ -91,17 +93,28 @@
             border-top: 20px solid var(--light-green);
         }
         
-        .login-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
+        .login-logo {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            font-size: 36px;
-            border: 3px solid rgba(255,255,255,0.3);
+        }
+        
+        .login-logo img {
+            height: 100px;
+            width: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        .login-logo-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 5px;
+            line-height: 1.4;
         }
         
         .login-header h2 {
@@ -290,6 +303,18 @@
             .login-header h2 {
                 font-size: 24px;
             }
+            
+            .login-logo img {
+                height: 80px;
+            }
+            
+            .login-logo-text {
+                font-size: 14px;
+            }
+            
+            body {
+                padding: 10px 0;
+            }
         }
     </style>
 </head>
@@ -297,8 +322,9 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="login-icon">
-                    <i class="fas fa-map-marked-alt"></i>
+                <div class="login-logo">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo">
+                    <div class="login-logo-text">Pemetaan Pengukuran Lingkungan Kerja</div>
                 </div>
                 <h2>Selamat Datang</h2>
                 <p>Sistem Pemetaan Lingkungan Kerja</p>

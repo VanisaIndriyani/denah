@@ -160,6 +160,16 @@ class PointController extends Controller
                     ->delete();
             }
             
+            // Simpan semua measurements sebagai JSON
+            $measurementsData = [];
+            foreach ($measurements as $measurement) {
+                $measurementsData[] = [
+                    'parameter' => $measurement['parameter'],
+                    'value' => $measurement['value'],
+                    'unit' => $measurement['unit'],
+                ];
+            }
+            
             $areaPoint = Point::create([
                 'floor_plan_id' => $floorPlan->id,
                 'room_id' => $request->room_id,
@@ -173,6 +183,7 @@ class PointController extends Controller
                 'meets_nab' => null, // Area tidak punya meets_nab langsung
                 'notes' => $request->notes,
                 'coordinates' => $request->coordinates,
+                'measurements' => !empty($measurementsData) ? $measurementsData : null,
             ]);
         } else {
             // Untuk type 'point', buat point measurement
