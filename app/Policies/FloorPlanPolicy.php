@@ -21,7 +21,12 @@ class FloorPlanPolicy
      */
     public function view(User $user, FloorPlan $floorPlan): bool
     {
-        return $user->id === $floorPlan->user_id;
+        // Admin bisa melihat semua floor plan
+        if ($user->email === 'admin@pemetaan.com' || $user->username === 'admin') {
+            return true;
+        }
+        // Semua user yang sudah login bisa melihat semua floor plan
+        return true;
     }
 
     /**
@@ -37,7 +42,12 @@ class FloorPlanPolicy
      */
     public function update(User $user, FloorPlan $floorPlan): bool
     {
-        return $user->id === $floorPlan->user_id;
+        // Admin bisa update semua floor plan
+        if ($user->email === 'admin@pemetaan.com' || $user->username === 'admin') {
+            return true;
+        }
+        // Semua user yang sudah login bisa update semua floor plan
+        return true;
     }
 
     /**
@@ -45,7 +55,12 @@ class FloorPlanPolicy
      */
     public function delete(User $user, FloorPlan $floorPlan): bool
     {
-        return $user->id === $floorPlan->user_id;
+        // Admin bisa delete semua floor plan
+        if ($user->email === 'admin@pemetaan.com' || $user->username === 'admin') {
+            return true;
+        }
+        // Semua user yang sudah login bisa delete semua floor plan
+        return true;
     }
 
     /**
